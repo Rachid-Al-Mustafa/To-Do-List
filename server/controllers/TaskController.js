@@ -62,8 +62,18 @@ const DeleteTask = async (req, res) => {
   }
 };
 
+const TasksList = async (req, res) => { 
+  try {
+    const tasks = await Task.find();
+    return res.status(200).json(tasks);
+  } catch (error) {
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 module.exports = {
   AddTask,
   EditTask,
   DeleteTask,
+  TasksList,
 };
