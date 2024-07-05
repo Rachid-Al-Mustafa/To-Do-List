@@ -1,0 +1,4 @@
+.gitignore
+.env
+request.rest
+node_modules

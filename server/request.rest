@@ -1,0 +1,100 @@
+POST http://localhost:3000/api/register
+Content-Type: application/json
+
+{
+    "username": "owner",
+    "email": "owner@gmail.com",
+    "password": "teamLeader123",
+    "role": "superAdmin"
+}
+
+###
+//login to your account
+POST http://localhost:3000/api/login
+Content-Type: application/json
+
+{
+    "email": "mohammad.hussin377@gmail.com",
+    "password": "rachid123"
+}
+
+###
+//edit a user information
+POST http://localhost:3000/api/user/edit-user
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ODY5YTIzNzZiZjYyYjllN2QyY2QyOSIsImlhdCI6MTcyMDA5NzQzM30.gc6sUnojVqwVpu-I-jyyK_1SzbjQXS-Oon6W_9A71Y4
+
+{
+    "id": "66869a2376bf62b9e7d2cd29",
+  "password": "mohammad123"
+}
+
+###
+//creat a new task
+POST http://localhost:3000/api/task/newTask
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ODY5YTIzNzZiZjYyYjllN2QyY2QyOSIsImlhdCI6MTcyMDA5NzQzM30.gc6sUnojVqwVpu-I-jyyK_1SzbjQXS-Oon6W_9A71Y4
+
+{
+    "userId": "66869a2376bf62b9e7d2cd29",
+  "title": "GitHub",
+  "description": "Create a new GitHub repositry for the new project"
+}
+
+###
+//update an already existing task
+POST http://localhost:3000/api/task/editTask/66869d06751f1d2c8150ef53
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ODY5YTIzNzZiZjYyYjllN2QyY2QyOSIsImlhdCI6MTcyMDA5NzQzM30.gc6sUnojVqwVpu-I-jyyK_1SzbjQXS-Oon6W_9A71Y4
+
+{
+  "title": "ERP Schemas",
+  "description": "Create all the schemas required to start working on the ERP System today."
+}
+
+###
+//delete an already existing task
+DELETE http://localhost:3000/api/task/task/66869d06751f1d2c8150ef53
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ODY5YTIzNzZiZjYyYjllN2QyY2QyOSIsImlhdCI6MTcyMDA5NzQzM30.gc6sUnojVqwVpu-I-jyyK_1SzbjQXS-Oon6W_9A71Y4
+
+{
+  "title": "ERP Schemas",
+  "description": "Create all the schemas required to start working on the ERP System today."
+}
+
+###
+//check the users actions
+POST http://localhost:3000/api/analytics/analytics
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ODY5YTIzNzZiZjYyYjllN2QyY2QyOSIsImlhdCI6MTcyMDA5NzQzM30.gc6sUnojVqwVpu-I-jyyK_1SzbjQXS-Oon6W_9A71Y4
+
+{
+  "userId": "66869a2376bf62b9e7d2cd29",
+  "taskId": "6686a517751f1d2c8150ef5b",
+  "action": "edit"
+}
+
+###
+//check a user actions
+GET http://localhost:3000/api/analytics/analytics/user/66869a2376bf62b9e7d2cd29
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ODY5YTIzNzZiZjYyYjllN2QyY2QyOSIsImlhdCI6MTcyMDA5NzQzM30.gc6sUnojVqwVpu-I-jyyK_1SzbjQXS-Oon6W_9A71Y4
+
+{
+  "title": "ERP Schemas",
+  "description": "Create all the schemas required to start working on the ERP System today."
+}
+
+###
+//check a task info
+GET http://localhost:3000/api/analytics/analytics/task/6686a517751f1d2c8150ef5b
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ODY5YTIzNzZiZjYyYjllN2QyY2QyOSIsImlhdCI6MTcyMDA5NzQzM30.gc6sUnojVqwVpu-I-jyyK_1SzbjQXS-Oon6W_9A71Y4
+
+{
+  "title": "ERP Schemas",
+  "description": "Create all the schemas required to start working on the ERP System today."
+}
+
+###
