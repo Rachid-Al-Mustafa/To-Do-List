@@ -5,10 +5,8 @@ const EditProfile = async (req, res) => {
     return res.status(400).json({ message: 'No data provided for update' });
   }
 
-  const userId = req.user.id;
-
   try {
-    const { username, email, password } = req.body;
+    const {id, username, email, password } = req.body;
 
     const updatedFields = {};
     if (username) updatedFields.username = username;
@@ -16,7 +14,7 @@ const EditProfile = async (req, res) => {
     if (password) updatedFields.password = password;
 
     const user = await User.findByIdAndUpdate(
-      userId,
+      id,
       {
         $set: updatedFields,
       },
@@ -33,7 +31,7 @@ const EditProfile = async (req, res) => {
 const changeUserRole = async (req, res, next) => {
   const { userId, newRole } = req.body;
 
-  if (!userId || !newRole || !['user', 'teamLeader'].includes(newRole)) {
+  if (!userId || !newRole || !['user', 'admin'].includes(newRole)) {
     return res.status(400).json({ message: 'Invalid user ID or role' });
   }
 
@@ -52,7 +50,43 @@ const changeUserRole = async (req, res, next) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({ role: { $ne: 'superAdmin' } });
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+const deleteUser = async (req, res) => {
+  const { ids } = req.body;
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ message: 'Array of user IDs is required' });
+  }
+
+  try {
+    const result = await User.deleteMany({ _id: { $in: ids } });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: 'No users found to delete' });
+    }
+
+    res
+      .status(200)
+      .json({
+        message: 'Users deleted successfully',
+        deletedCount: result.deletedCount,
+      });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 module.exports = {
   EditProfile,
   changeUserRole,
+  getAllUsers,
+  deleteUser,
 };

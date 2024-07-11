@@ -1,4 +1,14 @@
 const UserAnalytics = require('../models/analyticsSchema');
+const User = require('../models/userSchema');
+
+const Analytics = async (req, res) => { 
+  try {
+    const allAnalytics = await UserAnalytics.find({}).populate('userId').populate('taskId');
+    return res.status(201).json(allAnalytics);
+  } catch (error) {
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+}
 
 const UserActions = async (req, res) => {
   const { userId, taskId, action } = req.body;
@@ -10,6 +20,17 @@ const UserActions = async (req, res) => {
   }
 
   try {
+    if (action === 'delete' && Array.isArray(taskId)) {
+      const actions = taskId.map((id) => ({
+        userId,
+        taskId: id,
+        action,
+      }));
+
+      const savedActions = await UserAnalytics.insertMany(actions);
+      return res.status(201).json(savedActions);
+    }
+    
     const newUserAction = new UserAnalytics({
       userId,
       taskId,
@@ -24,15 +45,24 @@ const UserActions = async (req, res) => {
 };
 
 const UserAnalytic = async (req, res) => {
-  const { id } = req.params;
-
   try {
-    const userActions = await UserAnalytics.find({ userId: id })
-      .populate('taskId')
-      .populate('userId');
-    return res.status(200).json(userActions);
+    const users = await User.find({});
+    const userTaskData = await Promise.all(
+      users.map(async (user) => {
+        const taskCount = await UserAnalytics.countDocuments({
+          userId: user._id,
+          action: 'complete',
+        });
+        return {
+          username: user.username,
+          taskCount,
+        };
+      })
+    );
+
+    res.status(200).json(userTaskData);
   } catch (error) {
-    return res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -99,4 +129,5 @@ module.exports = {
   TaskAnalytic,
   GetTasksByStatus,
   GetUsersByAction,
+  Analytics,
 };

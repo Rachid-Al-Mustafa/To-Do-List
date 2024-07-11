@@ -72,10 +72,10 @@ const Login = async (req, res, next) => {
 };
 
 const Logout = async (req, res) => {
-  const { userId } = req.body;
+  const { id } = req.body;
 
   try {
-    const user = await User.findByIdAndUpdate(userId, { token: null });
+    const user = await User.findByIdAndUpdate(id, { token: null });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }

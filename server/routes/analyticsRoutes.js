@@ -7,11 +7,14 @@ const {
   TaskAnalytic,
   GetTasksByStatus,
   GetUsersByAction,
+  Analytics,
 } = require('../controllers/AnalyticsController');
+
+router.get('/dataAnalytics', verifyToken, Analytics);
 
 router.post('/analytics', verifyToken, UserActions);
 
-router.get('/analytics/user/:id', verifyToken, UserAnalytic);
+router.get('/userTasks', verifyToken, UserAnalytic);
 
 router.get('/analytics/task/:id', verifyToken, TaskAnalytic);
 

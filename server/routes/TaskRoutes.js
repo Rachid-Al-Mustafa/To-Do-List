@@ -6,14 +6,20 @@ const {
   EditTask,
   DeleteTask,
   TasksList,
+  UpdateTaskStatus,
+  getTaskAnalytics,
 } = require('../controllers/TaskController');
+
+router.get('/getTaskAnalytics', verifyToken, getTaskAnalytics);
 
 router.post('/newTask', verifyToken, AddTask);
 
 router.post('/editTask/:id', verifyToken, EditTask);
 
-router.delete('/task/:id', verifyToken, DeleteTask);
+router.post('/removeTasks', verifyToken, DeleteTask);
 
 router.get('/tasksList', verifyToken, TasksList);
+
+router.post('/updateStatus', UpdateTaskStatus);
 
 module.exports = router;

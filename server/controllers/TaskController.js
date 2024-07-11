@@ -34,7 +34,7 @@ const EditTask = async (req, res) => {
   try {
     const updatedTask = await Task.findByIdAndUpdate(id, updateData, {
       new: true,
-    });
+    }).populate('userId');
 
     if (!updatedTask) {
       return res.status(404).json({ message: 'Task not found' });
@@ -47,16 +47,27 @@ const EditTask = async (req, res) => {
 };
 
 const DeleteTask = async (req, res) => {
-  const { id } = req.params;
+  const { ids } = req.body;
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res
+      .status(400)
+      .json({ message: 'Invalid request. No task IDs provided.' });
+  }
 
   try {
-    const deletedTask = await Task.findByIdAndDelete(id);
+    const result = await Task.deleteMany({ _id: { $in: ids } });
 
-    if (!deletedTask) {
-      return res.status(404).json({ message: 'Task not found' });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: 'No tasks found to delete.' });
     }
 
-    return res.status(200).json({ message: 'Task deleted successfully' });
+    return res
+      .status(200)
+      .json({
+        message: 'Tasks deleted successfully',
+        deletedCount: result.deletedCount,
+      });
   } catch (error) {
     return res.status(500).json({ error: 'Internal server error' });
   }
@@ -64,10 +75,56 @@ const DeleteTask = async (req, res) => {
 
 const TasksList = async (req, res) => { 
   try {
-    const tasks = await Task.find();
+    const tasks = await Task.find().populate('userId');
     return res.status(200).json(tasks);
   } catch (error) {
     return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+const UpdateTaskStatus = async (req, res) => {
+  const { taskId, newStatus } = req.body;
+
+  try {
+    const updatedTask = await Task.findByIdAndUpdate(
+      taskId,
+      { isCompleted: newStatus, completedAt: newStatus ? new Date() : null },
+      { new: true }
+    );
+
+    if (!updatedTask) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    return res
+      .status(200)
+      .json({ message: 'Task status updated successfully', task: updatedTask });
+  } catch (error) {
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+const getTaskAnalytics = async (req, res) => {
+  try {
+    const tasks = await Task.find({});
+
+    const totalTasks = tasks.length;
+    const completedTasks = tasks.filter((task) => task.isCompleted).length;
+    const completionRate = (completedTasks / totalTasks) * 100;
+
+    const timeline = tasks
+      .filter((task) => task.isCompleted)
+      .reduce((acc, task) => {
+        const date = task.completedAt.toISOString().split('T')[0];
+        acc[date] = (acc[date] || 0) + 1;
+        return acc;
+      }, {});
+
+    res
+      .status(200)
+      .json({ totalTasks, completedTasks, completionRate, timeline });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -76,4 +133,6 @@ module.exports = {
   EditTask,
   DeleteTask,
   TasksList,
+  UpdateTaskStatus,
+  getTaskAnalytics
 };

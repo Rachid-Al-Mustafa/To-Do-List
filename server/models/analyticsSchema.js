@@ -14,7 +14,7 @@ const UserAnalyticsSchema = new Schema({
   },
   action: {
     type: String,
-    enum: ['create', 'edit', 'inProgress', 'complete', 'delete'],
+    enum: ['create', 'edit', 'complete', 'delete'],
     required: true,
   },
   timestamp: {
